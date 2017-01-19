@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+
+{% block css %}
+<link rel='stylesheet' href='/static/css/draft.css'>
+{% endblock %}
+<! ---
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+-- >
+
+{% block body %}
+<div class='row' id='top-pane'>
+    <div class='nine columns child' id='pack-pane'>
+        {% if session['draft_owner'] %}
+        <div class='pre-draft-view'>
+            <h5>Start the draft once everyone is in</h5>
+            <button>Start the Draft</button>
+        </div>
+        {% else %}
+        <div class='pre-draft-view'>
+            <h5>Please wait for the owner to begin the draft</h5>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class='three columns child' id='chat-pane'>
+        <p><small>Draft Room: {{session['draft_id']}}</small></p>
+        <ul id='messages'>
+        </ul>
+        <form id='send-message'>
+            <input id='message-text'><button id='submit-message'>Send</button>
+        </form>
+    </div>
+</div>
+<div id='bottom-pane'>
+</div>
+<span class='hidden' id='username'>{{session['username']}}</span>
+<span class='hidden' id='draft-id'>{{session['draft_id']}}</span>
+{% endblock %}
+
+{% block js %}
+<script
+    src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+    crossorigin="anonymous">
+</script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src='/static/js/draft.js'></script>
+{% endblock %}

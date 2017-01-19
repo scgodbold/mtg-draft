@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class='container'>
+    <h1>MTG Draft</h1>
+
+    
+    <div class=row'>
+        <div id='new_draft' class='six columns'>
+            <h5>Start a new Draft</h3>
+            <form action='/draft/create' method='POST'>
+                <input name='username' id='username' type='text' required placeholder='Draft Username'><br>
+                <input type='submit' value='Start Draft'>
+            </form>
+        </div>
+        <div id='join_draft' class='six columns'>
+            <h5>Join a Draft</h3>
+            <form action='/draft/join' method='POST'>
+                <input name='username' id='username' type='text' required placeholder='Draft Username'><br>
+                <input name='passphrase' id='passphrase' type='text' required placeholder='Draft Passphrase'><br>
+                <input type='submit' value='Join Draft'>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
