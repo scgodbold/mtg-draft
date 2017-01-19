@@ -13,4 +13,15 @@ class Draft(db.Model):
     def __repr__(self):
         return 'Draft(id: {})'.format(self.draft_key)
 
-db.create_all()
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(32))
+    ip = db.Column(db.String(16))  # used for resuming state on disconnect (presumably)
+
+    def __init__(self, name='', ip=''):
+        self.name = name
+        self.ip = ip
+
+    def __repr__(self):
+        return 'User({}, {})'.format(self.name, self.ip_)

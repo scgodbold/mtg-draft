@@ -13,4 +13,8 @@ db = SQLAlchemy(app)
 socketio = SocketIO(app)
 
 
-from app import models, views, websockets
+from app import models
+db.create_all()
+
+
+from app import views, websockets
