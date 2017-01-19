@@ -96,3 +96,6 @@ ENV/
 
 #Secrets are best untold
 secret.py
+
+# No SQLite files in our git
+*.db
