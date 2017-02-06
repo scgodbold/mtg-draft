@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 socketio = SocketIO(app)
 
 
-from app import models
+from app.models import draft
 db.create_all()
 
 

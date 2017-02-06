@@ -33,7 +33,7 @@
     </div>
 
     <div class='three columns child' id='chat-pane'>
-        <p><small>Draft Room: {{session['draft_id']}}</small></p>
+        <p><small>Draft Room: {{session['draft_key']}}</small></p>
         <ul id='messages'>
         </ul>
         <form id='send-message'>
@@ -43,8 +43,8 @@
 </div>
 <div id='bottom-pane'>
 </div>
-<span class='hidden' id='username'>{{session['username']}}</span>
-<span class='hidden' id='draft-id'>{{session['draft_id']}}</span>
+<span class='hidden' id='username'>{{session['player_name']}}</span>
+<span class='hidden' id='draft-id'>{{session['draft_key']}}</span>
 {% endblock %}
 
 {% block js %}

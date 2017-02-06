@@ -1,0 +1,22 @@
+{
+  "name": "mtg-draft",
+  "homepage": "https://github.com/scgodbold/mtg-draft",
+  "authors": [
+    "Scott Godbold <scgodbold@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/static/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-toast-plugin": "^1.3.1"
+  }
+}

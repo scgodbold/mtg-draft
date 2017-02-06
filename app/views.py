@@ -1,57 +1,74 @@
-import random
-
 from flask import render_template, redirect, session, request
-from xkcdpass import xkcd_password as xp
+from flask import flash
 
 from app import db, app
-from app.models import Draft, User
+from app.decorators import announce, templated
+from app.exceptions import MTGException, JoinDraftException
+from app.models.draft import Draft, Player
 
 
 @app.route('/', methods=['GET'])
+@templated()
 def home():
-    return render_template('home.html')
+    '''Default homepage'''
+    return {}
 
 
 @app.route('/draft/create', methods=['POST'])
 def create_draft():
-    # Generate draftroom name
-    wordfile = xp.locate_wordfile()
-    words = xp.generate_wordlist(wordfile=wordfile, min_length=5, max_length=8)
-    draft_id = xp.generate_xkcdpassword(words, acrostic=random.choice(app.config['ALPHABET']))
-
+    '''Creates a new draft for other players to join into'''
     # Create Draft in the database
-    draft = Draft(draft_key=draft_id)
+    draft = Draft()
     db.session.add(draft)
-
     # Create the user and add to the Draft
-    user = User(name=request.form.get('username'), ip=request.remote_addr)
-    db.session.add(user)
-
+    player = Player(name=request.form.get('username'),
+                    owner=True)
+    player.draft = draft
+    db.session.add(player)
     db.session.commit()
 
-    session['draft_id'] = draft_id
-    session['username'] = request.form.get('username')
-    session['draft_owner'] = True
+    session['draft_key'] = draft.key
+    session['draft_owner'] = player.owner
+    session['player_name'] = player.name
+    session['player_id'] = player.id
     return redirect('/draft')
 
 
 @app.route('/draft/join', methods=['POST'])
+@announce(MTGException)
 def join_draft():
+    '''Adds a  player into an existing draft'''
     draft_key = request.form.get('passphrase')
     username = request.form.get('username')
-    draft = Draft.query.filter_by(draft_key=draft_key).first()
-    if draft is None or username is None:
-        print('Draft not found: {}'.format(draft_key))
-        return redirect('/')
-    if session.get('draft_id', None) == draft_key and session.get('username') == username:
-        session['draft_owner'] == session.get('draft_owner', False)
-    else:
-        session['draft_id'] = draft_key
-        session['username'] = username
-        session['draft_owner'] = False
+
+    # Get the draft
+    draft = Draft.query.filter_by(key=draft_key).first()
+    if draft is None:
+        raise(JoinDraftException('Unable to locate draft: {}'.format(draft_key)))
+
+    # Get the user
+    if username is None:
+        raise(JoinDraftException('Please specify a username inorder to join the draft'))
+    player_id = session.get('player_id', None)
+    player = Player.get_joined_player(name=username, draft_id=draft.id, player_id=player_id)
+    if player is None:
+        player = Player(name=username)
+        player.draft = draft
+        db.session.add(player)
+        db.session.commit()
+
+    # Renew session values
+    session['draft_key'] = draft.key
+    session['draft_owner'] = player.owner
+    session['player_name'] = player.name
+    session['player_id'] = player.id
     return redirect('/draft')
 
 
 @app.route('/draft', methods=['GET'])
+@announce(MTGException)
+@templated()
 def draft():
-    return render_template('draft.html')
+    '''Page where the draft occurs'''
+    if session.get('draft_key', None) is None:
+        raise(MTGException('Seems that you have wondered here by mistake...'))

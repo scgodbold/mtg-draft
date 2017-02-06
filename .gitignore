@@ -99,3 +99,5 @@ secret.py
 
 # No SQLite files in our git
 *.db
+
+bower_components/
